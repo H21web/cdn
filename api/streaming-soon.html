@@ -1,1 +1,47 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streaming soon API Data</title>
+    <style>
+        #jsonOutput {
+            white-space: pre-wrap; /* Preserve formatting */
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ddd;
+            max-height: 90%;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h2>OTT Streaming Soon API Data</h2>
+    <div id="jsonOutput"></div>
+    
+    <script>
+        // Fetch data from the API
+        fetch('https://www.binged.com/wp-json/binged-api/v1/movies?mode=streaming-soon')
+          .then(response => response.json())
+          .then(data => {
+            // Process the data to extract relevant information
+            const structuredData = data.data.map(movie => ({
+              title: movie.title,
+              streaming_date: movie['streaming-date'], // Update this line
+              languages: movie.languages,
+              platforms: movie.platforms.map(platform => platform.name)
+            }));
+            
+            // Convert the structured data to a JSON string
+            const jsonString = JSON.stringify(structuredData, null, 2);
+            
+            // Display the JSON string in the page
+            document.getElementById('jsonOutput').textContent = jsonString;
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+            document.getElementById('jsonOutput').textContent = 'Error fetching data.';
+          });
+    </script>
+</body>
+</html>
