@@ -3,21 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Streaming soon API Data</title>
+    <title>Streaming Soon API Data</title>
     <style>
-        #jsonOutput {
-            white-space: pre-wrap; /* Preserve formatting */
-            background-color: #f4f4f4;
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: none; /* Hide the body initially */
+        }
+        h2 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
             padding: 10px;
+            text-align: left;
             border: 1px solid #ddd;
-            max-height: 90%;
-            overflow-y: auto;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        #jsonOutput {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            white-space: pre-wrap; /* Preserve formatting */
         }
     </style>
 </head>
 <body>
     <h2>OTT Streaming Soon API Data</h2>
-    <div id="jsonOutput"></div>
+    <div id="tableContainer"></div>
     
     <script>
         // Fetch data from the API
@@ -27,20 +47,38 @@
             // Process the data to extract relevant information
             const structuredData = data.data.map(movie => ({
               title: movie.title,
-              streaming_date: movie['streaming-date'], // Update this line
-              languages: movie.languages,
-              platforms: movie.platforms.map(platform => platform.name)
+              streaming_date: movie['streaming-date'], 
+              languages: movie.languages.join(', '), // Join languages into a single string
+              platforms: movie.platforms.map(platform => platform.name).join(', ') // Join platforms into a single string
             }));
             
-            // Convert the structured data to a JSON string
-            const jsonString = JSON.stringify(structuredData, null, 2);
+            // Create a table to display the structured data
+            let tableHTML = '<table>';
+            tableHTML += '<tr><th>Title</th><th>Streaming Date</th><th>Languages</th><th>Platforms</th></tr>';
             
-            // Display the JSON string in the page
-            document.getElementById('jsonOutput').textContent = jsonString;
+            structuredData.forEach(movie => {
+              tableHTML += `
+                <tr>
+                  <td>${movie.title}</td>
+                  <td>${movie.streaming_date}</td>
+                  <td>${movie.languages}</td>
+                  <td>${movie.platforms}</td>
+                </tr>`;
+            });
+            
+            tableHTML += '</table>';
+            
+            // Insert the table into the page
+            document.getElementById('tableContainer').innerHTML = tableHTML;
+            
+            // Once data is loaded, display the body
+            document.body.style.display = 'block';
           })
           .catch(error => {
             console.error('Error fetching data:', error);
-            document.getElementById('jsonOutput').textContent = 'Error fetching data.';
+            document.getElementById('tableContainer').textContent = 'Error fetching data.';
+            // Show the body even if there is an error
+            document.body.style.display = 'block';
           });
     </script>
 </body>
